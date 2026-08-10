@@ -57,12 +57,15 @@ export default function Home() {
   const invite = typeof window !== "undefined" ? `${window.location.origin}?room=${encodeURIComponent(room)}` : "";
 
   return (
-    <main className="min-h-screen bg-[#101113] text-stone-100">
-      <section className="mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 gap-8 px-5 py-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+    <main className="relative min-h-screen overflow-hidden bg-[#101113] text-stone-100">
+      <div className="ambient-grid pointer-events-none absolute inset-0 opacity-60" />
+      <div className="pointer-events-none absolute -right-28 top-20 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
+      <section className="relative mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 gap-8 px-5 py-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
         <div className="flex flex-col justify-between gap-8 py-4">
           <nav className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image src="/brand-logo.png" alt="Ka-Ching ER logo" width={48} height={48} className="h-12 w-12 rounded-lg object-cover" priority />
+              <Image src="/brand-logo.png" alt="Ka-Ching ER logo" width={48} height={48} className="brand-float h-12 w-12 rounded-lg object-cover ring-1 ring-orange-300/40" priority />
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-orange-300">Ka-Ching ER</p>
                 <p className="text-xs text-stone-400">MagicBlock decision wallet</p>
@@ -96,7 +99,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-[#17181b] p-4 shadow-2xl shadow-black/30 sm:p-6">
+        <div className="shine rounded-xl border border-white/10 bg-[#17181b]/95 p-4 shadow-2xl shadow-black/30 backdrop-blur sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div>
               <h2 className="text-2xl font-semibold">Payment Duel Room</h2>
@@ -128,7 +131,7 @@ export default function Home() {
                   <button
                     key={choice.id}
                     onClick={() => setMove(choice.id)}
-                    className={`rounded-lg border p-4 text-left transition ${move === choice.id ? "border-orange-300 bg-orange-300/10" : "border-white/10 bg-black/20 hover:border-white/30"}`}
+                    className={`rounded-lg border p-4 text-left transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10 ${move === choice.id ? "proof-pulse border-orange-300 bg-orange-300/10" : "border-white/10 bg-black/20 hover:border-white/30"}`}
                   >
                     <div className={`mb-4 h-16 rounded-lg bg-gradient-to-br ${choice.tone}`} />
                     <p className="font-semibold">{choice.label}</p>
@@ -204,7 +207,7 @@ export default function Home() {
                 {proofs.length === 0 ? (
                   <p className="py-6 text-center text-sm text-stone-500">No signed proof yet. Connect a devnet wallet and run the three steps.</p>
                 ) : proofs.map((proof) => (
-                  <a key={proof.signature} href={explorerTx(proof.signature)} target="_blank" rel="noreferrer" className="rounded-lg bg-black/20 p-3 hover:bg-black/30">
+                  <a key={proof.signature} href={explorerTx(proof.signature)} target="_blank" rel="noreferrer" className="rounded-lg bg-black/20 p-3 transition hover:-translate-y-0.5 hover:bg-black/30 hover:shadow-lg hover:shadow-orange-500/10">
                     <span className="flex items-center justify-between gap-3 text-sm font-semibold">
                       {proof.label}
                       <ExternalLink className="h-4 w-4 text-stone-500" />
