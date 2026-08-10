@@ -6,9 +6,9 @@ import { CheckCircle2, Copy, ExternalLink, Loader2, ShieldCheck, Swords, Wallet 
 import { connectWallet, explorerTx, hashMove, resolveDuel, sendMemoProof, shortKey } from "@/lib/solana";
 
 const choices = [
-  { id: "shield", label: "Shield", beats: "strike", tone: "from-cyan-400 to-emerald-300" },
-  { id: "signal", label: "Signal", beats: "shield", tone: "from-violet-400 to-fuchsia-300" },
-  { id: "strike", label: "Strike", beats: "signal", tone: "from-orange-400 to-red-400" },
+  { id: "shield", label: "Shield", beats: "strike", tone: "from-cyan-300 to-emerald-300", symbol: "SH" },
+  { id: "signal", label: "Signal", beats: "shield", tone: "from-violet-300 to-fuchsia-300", symbol: "SG" },
+  { id: "strike", label: "Strike", beats: "signal", tone: "from-orange-300 to-red-400", symbol: "ST" },
 ] as const;
 
 type Choice = (typeof choices)[number]["id"];
@@ -27,13 +27,13 @@ export default function Home() {
 
   const commitment = useMemo(() => hashMove(room, move, nonce), [room, move, nonce]);
   const result = useMemo(() => resolveDuel(move, opponentMove), [move, opponentMove]);
+  const invite = typeof window !== "undefined" ? `${window.location.origin}?room=${encodeURIComponent(room)}` : "";
 
   async function onConnect() {
     setError("");
     setBusy("connect");
     try {
-      const key = await connectWallet();
-      setWallet(key);
+      setWallet(await connectWallet());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wallet connection failed");
     } finally {
@@ -54,176 +54,124 @@ export default function Home() {
     }
   }
 
-  const invite = typeof window !== "undefined" ? `${window.location.origin}?room=${encodeURIComponent(room)}` : "";
-
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#101113] text-stone-100">
-      <div className="ambient-grid pointer-events-none absolute inset-0 opacity-60" />
-      <div className="pointer-events-none absolute -right-28 top-20 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
-      <section className="relative mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 gap-8 px-5 py-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
-        <div className="flex flex-col justify-between gap-8 py-4">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Image src="/brand-logo.png" alt="Ka-Ching ER logo" width={48} height={48} className="brand-float h-12 w-12 rounded-lg object-cover ring-1 ring-orange-300/40" priority />
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-orange-300">Ka-Ching ER</p>
-                <p className="text-xs text-stone-400">MagicBlock decision wallet</p>
-              </div>
-            </div>
-            <a className="text-sm text-stone-300 underline-offset-4 hover:text-white hover:underline" href="/judge">
-              Judge Proof
-            </a>
-          </nav>
+    <main className="kaching-stage min-h-screen overflow-hidden bg-[#070806] text-[#fff7e8]">
+      <div className="coin-rain" />
+      <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5">
+        <div className="flex items-center gap-3">
+          <Image src="/brand-logo.png" alt="Ka-Ching ER logo" width={56} height={56} className="token-logo h-14 w-14 rounded-full object-cover" priority />
+          <div>
+            <p className="kaching-title text-2xl uppercase text-amber-300">Ka-Ching ER</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-emerald-200/70">MagicBlock decision wallet</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a className="hidden h-11 items-center rounded-full border border-amber-300/25 px-4 font-mono text-xs uppercase tracking-[0.18em] text-amber-100 hover:bg-amber-300/10 sm:inline-flex" href="/judge">
+            Judge Proof
+          </a>
+          <button onClick={onConnect} className="inline-flex h-11 items-center gap-2 rounded-full bg-amber-300 px-4 text-sm font-black uppercase text-black transition hover:bg-emerald-200">
+            {busy === "connect" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
+            {wallet ? shortKey(wallet) : "Connect"}
+          </button>
+        </div>
+      </header>
 
-          <div className="max-w-xl">
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
-              <ShieldCheck className="h-4 w-4" /> ER commit/reveal
-            </p>
-            <h1 className="text-5xl font-semibold leading-[1.02] text-white sm:text-6xl">
-              Decide who pays without slowing the squad down.
-            </h1>
-            <p className="mt-5 text-lg leading-8 text-stone-300">
-              Ka-Ching ER is a fresh Solana Blitz V7 build inspired by collaborative multisig payment decisions. Squad members
-              privately commit moves, reveal together, and settle the payer/executor assignment with verifiable devnet proof.
-            </p>
+      <section className="relative z-10 mx-auto grid max-w-7xl gap-5 px-5 pb-6 lg:grid-cols-[280px_minmax(0,1fr)_320px]">
+        <aside className="console-rail order-2 rounded-lg border border-amber-300/20 bg-black/45 p-4 lg:order-1">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-amber-200/70">Room</p>
+          <input value={room} onChange={(e) => setRoom(e.target.value)} className="mt-3 h-12 w-full rounded-md border border-white/10 bg-[#11130d] px-3 font-mono text-sm outline-none focus:border-amber-300" />
+          <p className="mt-5 font-mono text-xs uppercase tracking-[0.2em] text-amber-200/70">Shared pot</p>
+          <input value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-3 h-12 w-full rounded-md border border-white/10 bg-[#11130d] px-3 font-mono text-sm outline-none focus:border-amber-300" />
+          <div className="mt-5 rounded-md border border-emerald-300/20 bg-emerald-300/10 p-3">
+            <ShieldCheck className="mb-2 h-5 w-5 text-emerald-200" />
+            <p className="text-sm font-semibold">Commit/reveal lane</p>
+            <p className="mt-1 text-xs leading-5 text-emerald-50/70">Move hash goes through MagicBlock ER, final payer proof settles to Solana devnet memo.</p>
+          </div>
+        </aside>
+
+        <section className="duel-table order-1 min-h-[620px] rounded-[32px] border border-amber-300/25 bg-[#151108]/90 p-5 shadow-2xl shadow-black/50 lg:order-2">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.28em] text-emerald-200">Devnet Live</p>
+              <h1 className="kaching-headline mt-3 max-w-3xl text-5xl uppercase leading-[0.92] text-white sm:text-7xl">
+                Pick the payer. Keep the squad moving.
+              </h1>
+            </div>
+            <div className="rounded-full border border-amber-300/25 px-4 py-2 font-mono text-xs uppercase tracking-[0.2em] text-amber-100">{proofs.length} tx</div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 text-sm">
-            {["Private commit", "ER reveal", "L1 settle"].map((item) => (
-              <div key={item} className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
-                <CheckCircle2 className="mb-3 h-5 w-5 text-orange-300" />
-                <p className="font-medium text-white">{item}</p>
-              </div>
+          <div className="relative mx-auto mt-10 grid max-w-3xl grid-cols-3 gap-3 sm:gap-6">
+            {choices.map((choice) => (
+              <button
+                key={choice.id}
+                onClick={() => setMove(choice.id)}
+                className={`move-token group aspect-square rounded-full border p-3 transition duration-300 ${move === choice.id ? "active-token border-amber-200" : "border-white/10 hover:border-amber-200/60"}`}
+              >
+                <span className={`grid h-full place-items-center rounded-full bg-gradient-to-br ${choice.tone} text-3xl font-black text-black shadow-inner sm:text-5xl`}>
+                  {choice.symbol}
+                </span>
+                <span className="mt-4 block text-center text-sm font-black uppercase tracking-[0.12em] text-white">{choice.label}</span>
+                <span className="block text-center font-mono text-[11px] uppercase text-white/45">beats {choice.beats}</span>
+              </button>
             ))}
           </div>
-        </div>
 
-        <div className="shine rounded-xl border border-white/10 bg-[#17181b]/95 p-4 shadow-2xl shadow-black/30 backdrop-blur sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-            <div>
-              <h2 className="text-2xl font-semibold">Payment Duel Room</h2>
-              <p className="text-sm text-stone-400">Create a room, commit privately, reveal, then settle the result.</p>
-            </div>
-            <button
-              onClick={onConnect}
-              className="inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-black transition hover:bg-orange-200"
-            >
-              {busy === "connect" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
-              {wallet ? shortKey(wallet) : "Connect Wallet"}
-            </button>
-          </div>
-
-          <div className="grid gap-5 py-5">
-            <label className="grid gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Room ID</span>
-              <input value={room} onChange={(e) => setRoom(e.target.value)} className="h-12 rounded-lg border border-white/10 bg-black/30 px-4 text-white outline-none focus:border-orange-300" />
-            </label>
-            <label className="grid gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Shared payment</span>
-              <input value={amount} onChange={(e) => setAmount(e.target.value)} className="h-12 rounded-lg border border-white/10 bg-black/30 px-4 text-white outline-none focus:border-orange-300" />
-            </label>
-
-            <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Your private move</p>
-              <div className="grid grid-cols-3 gap-3">
-                {choices.map((choice) => (
-                  <button
-                    key={choice.id}
-                    onClick={() => setMove(choice.id)}
-                    className={`rounded-lg border p-4 text-left transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10 ${move === choice.id ? "proof-pulse border-orange-300 bg-orange-300/10" : "border-white/10 bg-black/20 hover:border-white/30"}`}
-                  >
-                    <div className={`mb-4 h-16 rounded-lg bg-gradient-to-br ${choice.tone}`} />
-                    <p className="font-semibold">{choice.label}</p>
-                    <p className="text-xs text-stone-400">beats {choice.beats}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+          <div className="mt-16 grid gap-4 lg:grid-cols-[1fr_220px]">
+            <div className="rounded-lg border border-white/10 bg-black/35 p-4">
               <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-stone-500">Commitment hash</p>
-                  <p className="mt-1 break-all font-mono text-xs text-orange-200">{commitment}</p>
-                  <p className="mt-2 font-mono text-xs text-stone-500">nonce: {nonce}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setNonce(Math.random().toString(36).slice(2, 10))} className="rounded-md border border-white/10 px-3 py-2 text-xs font-semibold text-stone-300 hover:text-white">
-                    New nonce
-                  </button>
-                  <button onClick={() => navigator.clipboard.writeText(commitment)} className="rounded-md border border-white/10 p-2 text-stone-300 hover:text-white">
-                    <Copy className="h-4 w-4" />
-                  </button>
-                </div>
+                <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/50">Commitment hash</p>
+                <button onClick={() => navigator.clipboard.writeText(commitment)} className="rounded-md border border-white/10 p-2 text-white/60 hover:text-white" aria-label="Copy commitment hash">
+                  <Copy className="h-4 w-4" />
+                </button>
               </div>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <button
-                disabled={!wallet || Boolean(busy)}
-                onClick={() => writeProof("Commit move", "MagicBlock ER", `KACHING_ER_COMMIT:${room}:${amount}:${commitment}`)}
-                className="h-12 rounded-lg bg-orange-500 font-semibold text-black transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {busy === "Commit move" ? "Signing..." : "Commit via ER"}
-              </button>
-              <button
-                disabled={!wallet || Boolean(busy)}
-                onClick={() => writeProof("Reveal move", "MagicBlock ER", `KACHING_ER_REVEAL:${room}:${move}:${nonce}`)}
-                className="h-12 rounded-lg border border-white/15 font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Reveal
-              </button>
-              <button
-                disabled={!wallet || Boolean(busy)}
-                onClick={() => writeProof("Settle payer", "Solana Devnet", `KACHING_ER_SETTLE:${room}:${result}:${amount}`)}
-                className="h-12 rounded-lg border border-emerald-300/30 bg-emerald-300/10 font-semibold text-emerald-100 transition hover:bg-emerald-300/20 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Settle L1
+              <p className="mt-3 break-all font-mono text-xs text-amber-200">{commitment}</p>
+              <button onClick={() => setNonce(Math.random().toString(36).slice(2, 10))} className="mt-3 rounded-full border border-amber-300/20 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-amber-100 hover:bg-amber-300/10">
+                nonce {nonce}
               </button>
             </div>
-
-            <div className="grid gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-2">
-              <label className="grid gap-2">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Opponent reveal</span>
-                <select value={opponentMove} onChange={(e) => setOpponentMove(e.target.value as Choice)} className="h-11 rounded-lg border border-white/10 bg-[#101113] px-3 text-white">
-                  {choices.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
-                </select>
-              </label>
-              <div className="rounded-lg bg-black/20 p-3">
-                <p className="text-xs uppercase tracking-[0.18em] text-stone-500">Resolver</p>
-                <p className="mt-2 flex items-center gap-2 text-lg font-semibold"><Swords className="h-5 w-5 text-orange-300" /> {result}</p>
-              </div>
+            <div className="rounded-lg border border-white/10 bg-black/35 p-4">
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/50">Opponent</p>
+              <select value={opponentMove} onChange={(e) => setOpponentMove(e.target.value as Choice)} className="mt-3 h-11 w-full rounded-md border border-white/10 bg-[#11130d] px-3 text-sm">
+                {choices.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
+              </select>
+              <p className="mt-4 flex items-center gap-2 text-lg font-black"><Swords className="h-5 w-5 text-amber-300" /> {result}</p>
             </div>
+          </div>
 
-            {error ? <p className="rounded-lg border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-100">{error}</p> : null}
-
-            <div className="rounded-lg border border-white/10">
-              <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                <p className="font-semibold">Live proof timeline</p>
-                <p className="text-xs text-stone-500">{proofs.length} tx</p>
-              </div>
-              <div className="grid gap-2 p-3">
-                {proofs.length === 0 ? (
-                  <p className="py-6 text-center text-sm text-stone-500">No signed proof yet. Connect a devnet wallet and run the three steps.</p>
-                ) : proofs.map((proof) => (
-                  <a key={proof.signature} href={explorerTx(proof.signature)} target="_blank" rel="noreferrer" className="rounded-lg bg-black/20 p-3 transition hover:-translate-y-0.5 hover:bg-black/30 hover:shadow-lg hover:shadow-orange-500/10">
-                    <span className="flex items-center justify-between gap-3 text-sm font-semibold">
-                      {proof.label}
-                      <ExternalLink className="h-4 w-4 text-stone-500" />
-                    </span>
-                    <span className="mt-1 block text-xs text-stone-400">{proof.route}</span>
-                    <span className="mt-2 block break-all font-mono text-xs text-orange-200">{proof.signature}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            <button onClick={() => navigator.clipboard.writeText(invite)} className="h-11 rounded-lg border border-white/10 text-sm font-semibold text-stone-200 hover:bg-white/10">
-              Copy squad invite
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <button disabled={!wallet || Boolean(busy)} onClick={() => writeProof("Commit move", "MagicBlock ER", `KACHING_ER_COMMIT:${room}:${amount}:${commitment}`)} className="h-14 rounded-full bg-amber-300 font-black uppercase text-black transition hover:bg-emerald-200 disabled:opacity-40">
+              {busy === "Commit move" ? "Signing" : "Commit ER"}
+            </button>
+            <button disabled={!wallet || Boolean(busy)} onClick={() => writeProof("Reveal move", "MagicBlock ER", `KACHING_ER_REVEAL:${room}:${move}:${nonce}`)} className="h-14 rounded-full border border-white/15 font-black uppercase hover:bg-white/10 disabled:opacity-40">
+              Reveal
+            </button>
+            <button disabled={!wallet || Boolean(busy)} onClick={() => writeProof("Settle payer", "Solana Devnet", `KACHING_ER_SETTLE:${room}:${result}:${amount}`)} className="h-14 rounded-full border border-emerald-300/40 bg-emerald-300/10 font-black uppercase text-emerald-100 hover:bg-emerald-300/20 disabled:opacity-40">
+              Settle L1
             </button>
           </div>
-        </div>
+          {error ? <p className="mt-4 rounded-lg border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-100">{error}</p> : null}
+        </section>
+
+        <aside className="proof-strip order-3 rounded-lg border border-white/10 bg-black/50 p-4">
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <p className="font-black uppercase">Proof tape</p>
+            <CheckCircle2 className="h-5 w-5 text-amber-300" />
+          </div>
+          <div className="mt-3 grid max-h-[520px] gap-3 overflow-auto pr-1">
+            {proofs.length === 0 ? (
+              <p className="py-8 text-center text-sm text-white/45">Connect a devnet wallet and run the three actions.</p>
+            ) : proofs.map((proof) => (
+              <a key={proof.signature} href={explorerTx(proof.signature)} target="_blank" rel="noreferrer" className="rounded-md border border-white/10 bg-white/[0.04] p-3 transition hover:border-amber-300/40">
+                <span className="flex items-center justify-between gap-3 text-sm font-bold">{proof.label}<ExternalLink className="h-4 w-4 text-amber-200" /></span>
+                <span className="mt-1 block font-mono text-[11px] uppercase text-white/40">{proof.route}</span>
+                <span className="mt-2 block break-all font-mono text-xs text-amber-200">{proof.signature}</span>
+              </a>
+            ))}
+          </div>
+          <button onClick={() => navigator.clipboard.writeText(invite)} className="mt-4 h-11 w-full rounded-full border border-white/10 font-mono text-xs uppercase tracking-[0.14em] text-white/80 hover:bg-white/10">
+            Copy Invite
+          </button>
+        </aside>
       </section>
     </main>
   );

@@ -20,6 +20,7 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
+  font-family: "Trebuchet MS", Arial, sans-serif;
 }
 
 button,
@@ -67,4 +68,82 @@ select {
   width: 40%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
   animation: sweep 5s ease-in-out infinite;
+}
+
+.kaching-stage {
+  position: relative;
+  background:
+    radial-gradient(circle at 52% 32%, rgba(245, 158, 11, 0.2), transparent 32%),
+    linear-gradient(120deg, rgba(6, 78, 59, 0.24), transparent 44%),
+    #070806;
+}
+
+.coin-rain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(251, 191, 36, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px),
+    radial-gradient(circle, rgba(251, 191, 36, 0.16) 1px, transparent 2px);
+  background-size: 64px 64px, 64px 64px, 96px 96px;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+}
+
+.kaching-title,
+.kaching-headline {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 3px 3px 0 rgba(245, 158, 11, 0.45);
+}
+
+.token-logo {
+  animation: coin-spin 7s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18), 0 0 32px rgba(251, 191, 36, 0.25);
+}
+
+.duel-table {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(251, 191, 36, 0.18), transparent 38%),
+    radial-gradient(circle at 50% 56%, rgba(16, 185, 129, 0.13), transparent 30%),
+    #151108;
+}
+
+.duel-table::before {
+  content: "";
+  position: absolute;
+  inset: 82px 10% auto;
+  height: 36%;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.18);
+  transform: perspective(600px) rotateX(60deg);
+}
+
+.move-token {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(0,0,0,0.2));
+}
+
+.move-token:hover {
+  transform: translateY(-10px) rotate(-1deg);
+}
+
+.active-token {
+  animation: active-token 2.2s ease-in-out infinite;
+}
+
+.console-rail,
+.proof-strip {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 24px 80px rgba(0,0,0,0.28);
+}
+
+@keyframes coin-spin {
+  0%, 100% { transform: translateY(0) rotateY(0deg); }
+  50% { transform: translateY(-8px) rotateY(22deg); }
+}
+
+@keyframes active-token {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.24), 0 0 30px rgba(251, 191, 36, 0.2); }
+  50% { box-shadow: 0 0 0 12px rgba(251, 191, 36, 0), 0 0 54px rgba(16, 185, 129, 0.24); }
 }
