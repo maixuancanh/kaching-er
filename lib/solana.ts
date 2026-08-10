@@ -5,7 +5,7 @@ import { Buffer } from "buffer";
 
 const DEVNET_RPC = "https://api.devnet.solana.com";
 const MAGICBLOCK_ER_RPC = "https://devnet.magicblock.app";
-const MEMO_PROGRAM_ID = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+export const PROJECT_PROGRAM_ID = new PublicKey("HieogJcAfZr8jSpRAgJ2PL1wVTt8qU6A34xRYCPggmdP");
 
 type PhantomProvider = {
   publicKey?: PublicKey;
@@ -25,6 +25,10 @@ export function shortKey(key: string) {
 
 export function explorerTx(signature: string) {
   return `https://explorer.solana.com/tx/${signature}?cluster=devnet`;
+}
+
+export function explorerAddress(address = PROJECT_PROGRAM_ID.toBase58()) {
+  return `https://explorer.solana.com/address/${address}?cluster=devnet`;
 }
 
 export async function connectWallet() {
@@ -56,7 +60,7 @@ export async function buildMemoTransaction(endpoint: string, memo: string) {
   const transaction = new Transaction().add(
     new TransactionInstruction({
       keys: [],
-      programId: MEMO_PROGRAM_ID,
+      programId: PROJECT_PROGRAM_ID,
       data: Buffer.from(memo, "utf8"),
     }),
   );

@@ -2,7 +2,7 @@
 
 Independent Solana Blitz V7 submission inspired by collaborative payment-game wallets.
 
-Ka-Ching ER lets a small team resolve shared payment responsibility with a commit/reveal mini-game. Commit and reveal proof transactions are routed through MagicBlock ER, while the final payer assignment is settled on Solana devnet.
+Ka-Ching ER lets a small team resolve shared payment responsibility with a commit/reveal mini-game. Commit, reveal, and settlement proof transactions are sent to a deployed custom Solana program, with fast phases routed through MagicBlock ER.
 
 ## Demo Flow
 
@@ -17,7 +17,9 @@ Ka-Ching ER lets a small team resolve shared payment responsibility with a commi
 
 - MagicBlock ER endpoint: `https://devnet.magicblock.app`
 - Solana L1 endpoint: `https://api.devnet.solana.com`
-- Proof format: signed Solana memo transactions for the hackathon MVP.
+- Custom program ID: `HieogJcAfZr8jSpRAgJ2PL1wVTt8qU6A34xRYCPggmdP`
+- Deploy tx: `2ZrWv6Tg8EQuXmX84zznHycBu3cUKNWPFgYLdCFM1E7aFgZ6bNznMRxgtqyhUEx8dDnBcE6jDZv8vagxDE9gEQK5`
+- Proof format: wallet-signed custom program instructions carrying commit/reveal/settle payloads.
 
 ## Local Development
 

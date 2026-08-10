@@ -2,11 +2,14 @@ import { ExternalLink, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 const rows = [
-  ["Eligibility", "MagicBlock ER endpoint is used for commit/reveal proof transactions."],
+  ["Eligibility", "MagicBlock ER endpoint is used for commit/reveal proof transactions against a deployed custom Solana program."],
   ["Creativity", "A squad wallet uses a fast mini-game to resolve shared payment responsibility."],
-  ["Technical depth", "Commitment hash, nonce reveal, deterministic resolver, and L1 settlement proof are separated."],
+  ["Technical depth", "Commitment hash, nonce reveal, deterministic resolver, custom program instruction logs, and L1 settlement proof are separated."],
   ["Showcase", "The live app produces clickable devnet proof links from a browser wallet."],
 ];
+
+const programId = "HieogJcAfZr8jSpRAgJ2PL1wVTt8qU6A34xRYCPggmdP";
+const deployTx = "2ZrWv6Tg8EQuXmX84zznHycBu3cUKNWPFgYLdCFM1E7aFgZ6bNznMRxgtqyhUEx8dDnBcE6jDZv8vagxDE9gEQK5";
 
 export default function JudgePage() {
   return (
@@ -33,13 +36,21 @@ export default function JudgePage() {
           </div>
 
           <div className="mt-8 rounded-lg border border-white/10">
+            <div className="border-b border-white/10 px-4 py-3 font-semibold">Onchain deployment</div>
+            <div className="grid gap-3 p-4 text-sm text-stone-300">
+              <a className="break-all text-orange-200 hover:text-orange-100" href={`https://explorer.solana.com/address/${programId}?cluster=devnet`} target="_blank" rel="noreferrer">Program ID: {programId}</a>
+              <a className="break-all text-orange-200 hover:text-orange-100" href={`https://explorer.solana.com/tx/${deployTx}?cluster=devnet`} target="_blank" rel="noreferrer">Deploy tx: {deployTx}</a>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-lg border border-white/10">
             <div className="border-b border-white/10 px-4 py-3 font-semibold">Demo checklist</div>
             <ol className="grid gap-3 p-4 text-sm text-stone-300">
               <li>1. Connect a Solana devnet wallet.</li>
               <li>2. Pick Shield, Signal, or Strike and commit the hash through MagicBlock ER.</li>
               <li>3. Reveal the nonce and move through MagicBlock ER.</li>
               <li>4. Settle the payer assignment on Solana devnet.</li>
-              <li>5. Open each generated signature in Solana Explorer and verify the memo payload.</li>
+              <li>5. Open each generated signature in Solana Explorer and verify the custom program instruction.</li>
             </ol>
           </div>
 
